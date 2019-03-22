@@ -1,0 +1,20 @@
+
+# Expo
+.expo
+__generated__
+
+# Node
+node_modules
+npm-debug.log
+package-lock.json
+
+# Android
+*.apk
+
+# Keystore
+*.jks
+
+# VS Code
+.vscode
+
+.watchmanconfig

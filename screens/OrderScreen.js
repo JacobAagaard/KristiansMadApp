@@ -48,8 +48,6 @@ export default class HomeScreen extends React.Component {
         menuDateMap.set(dateArr[i], menuArr[i]);
         indexDateMap.set(dateArr[i], i);
       }
-      console.log("MenuDateMap: ", menuDateMap);
-      console.log("DateMenuMap: ", indexDateMap);
       this.setState({
         menuForDateMap: menuDateMap,
         indexForDateMap: indexDateMap
@@ -97,7 +95,7 @@ export default class HomeScreen extends React.Component {
   };
 
   onTextPress(event, text) {
-    this.setState({ selectedMenu: text });
+    this.setState({ selectedMenu: text && text });
   }
 
   render() {
@@ -117,9 +115,20 @@ export default class HomeScreen extends React.Component {
           </View>
 
           <View style={styles.getStartedContainer}>
+            <Text style={styles.whatToDo}>
+              1. Select date{" "}
+              {this.state.isDateSelected && (
+                <TabBarIcon
+                  name={
+                    Platform.OS === "ios"
+                      ? "ios-checkmark-circle-outline"
+                      : "md-checkmark-circle-outline"
+                  }
+                />
+              )}
+            </Text>
             {this.state.isDateSelected ? null : (
               <>
-                <Text style={styles.whatToDo}>1. Select date</Text>
                 <CalendarPicker
                   selectedDayColor={Colors.tintColor}
                   previousTitle="<"
@@ -138,42 +147,49 @@ export default class HomeScreen extends React.Component {
                     <Text style={styles.selectedDate}>{startDate}</Text>
                   </TouchableOpacity>
                 </View>
-                <Text style={styles.whatToDo}>2. Select Food from menu</Text>
-                <TouchableOpacity>
-                  <Text
-                    key={
-                      this.state.indexForDateMap.get(
-                        this.state.selectedStartDate
-                      ) &&
-                      this.state.indexForDateMap.get(
+                <Text style={styles.whatToDo}>
+                  2. Select Food from menu{" "}
+                  {this.state.selectedMenu && (
+                    <TabBarIcon
+                      name={
+                        Platform.OS === "ios"
+                          ? "ios-checkmark-circle-outline"
+                          : "md-checkmark-circle-outline"
+                      }
+                    />
+                  )}
+                </Text>
+                <Text
+                  key={
+                    this.state.indexForDateMap.get(
+                      this.state.selectedStartDate
+                    ) &&
+                    this.state.indexForDateMap.get(this.state.selectedStartDate)
+                  }
+                  onPress={e => {
+                    this.onTextPress(
+                      e,
+                      this.state.menuForDateMap.get(
                         this.state.selectedStartDate
                       )
+                    );
+                  }}
+                  style={[
+                    styles.getStartedText,
+                    {
+                      color: Colors.tintColor
                     }
-                    onPress={e => {
-                      this.onTextPress(
-                        e,
-                        this.state.menuForDateMap.get(
-                          this.state.selectedStartDate
-                        )
-                      );
-                    }}
-                    style={[
-                      styles.getStartedText,
-                      {
-                        color: Colors.tintColor
-                      }
-                    ]}
-                  >
-                    {this.state.menuForDateMap.get(this.state.selectedStartDate)
-                      ? this.state.menuForDateMap.get(
-                          this.state.selectedStartDate
-                        )
-                      : "Select another day"}
-                  </Text>
-                </TouchableOpacity>
+                  ]}
+                >
+                  {this.state.menuForDateMap.get(this.state.selectedStartDate)
+                    ? this.state.menuForDateMap.get(
+                        this.state.selectedStartDate
+                      )
+                    : "Select another day"}
+                </Text>
               </>
             ) : null}
-            {this.state.selectedMenu !== null && (
+            {this.state.selectedMenu && (
               <>
                 <Text style={styles.whatToDo}>{`3. Enjoy your ${
                   this.state.selectedMenu
@@ -222,13 +238,14 @@ const styles = StyleSheet.create({
   },
   whatToDo: {
     fontSize: 24,
+    fontStyle: "italic",
     paddingTop: 10,
-    paddingBottom: 10,
-    textDecorationLine: "underline"
+    paddingBottom: 10
   },
   selectedDate: {
     fontSize: 28,
-    color: Colors.tintColor
+    color: Colors.tintColor,
+    paddingBottom: 10
   },
   getStartedText: {
     fontSize: 20,

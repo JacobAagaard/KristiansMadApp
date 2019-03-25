@@ -6,15 +6,15 @@ import {
 } from "react-navigation";
 
 import TabBarIcon from "../components/TabBarIcon";
-import HomeScreen from "../screens/HomeScreen";
-import LinksScreen from "../screens/LinksScreen";
+import OrderScreen from "../screens/OrderScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 
-const Order = createStackNavigator({
-  Home: HomeScreen
+const OrderStack = createStackNavigator({
+  OrderScreen
 });
 
-Order.navigationOptions = {
+OrderStack.navigationOptions = {
   tabBarLabel: "Order",
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
@@ -24,11 +24,11 @@ Order.navigationOptions = {
   )
 };
 
-const Profile = createStackNavigator({
-  Links: LinksScreen
+const ProfileStack = createStackNavigator({
+  ProfileScreen
 });
 
-Profile.navigationOptions = {
+ProfileStack.navigationOptions = {
   tabBarLabel: "Profile",
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
@@ -39,7 +39,7 @@ Profile.navigationOptions = {
 };
 
 const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen
+  SettingsScreen
 });
 
 SettingsStack.navigationOptions = {
@@ -53,7 +53,7 @@ SettingsStack.navigationOptions = {
 };
 
 export default createBottomTabNavigator({
-  HomeStack: Order,
-  LinksStack: Profile,
+  OrderStack,
+  ProfileStack,
   SettingsStack
 });

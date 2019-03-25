@@ -101,6 +101,12 @@ export default class HomeScreen extends React.Component {
   render() {
     const { selectedStartDate } = this.state;
     const startDate = selectedStartDate ? selectedStartDate.toString() : "";
+    const indexForDate = selectedStartDate
+      ? this.state.indexForDateMap.get(this.state.selectedStartDate)
+      : "";
+    const menuForDate = selectedStartDate
+      ? this.state.menuForDateMap.get(this.state.selectedStartDate)
+      : "";
     return (
       <View style={styles.container}>
         <ScrollView
@@ -116,29 +122,17 @@ export default class HomeScreen extends React.Component {
 
           <View style={styles.getStartedContainer}>
             <Text style={styles.whatToDo}>
-              1. Select date{" "}
-              {this.state.isDateSelected && (
-                <TabBarIcon
-                  name={
-                    Platform.OS === "ios"
-                      ? "ios-checkmark-circle-outline"
-                      : "md-checkmark-circle-outline"
-                  }
-                />
-              )}
+              1. Select date {this.state.isDateSelected && <CheckmarkInline />}
             </Text>
             {this.state.isDateSelected ? null : (
-              <>
-                <CalendarPicker
-                  selectedDayColor={Colors.tintColor}
-                  previousTitle="<"
-                  nextTitle=">"
-                  startFromMonday={true}
-                  onDateChange={this.onDateChange}
-                />
-              </>
+              <CalendarPicker
+                selectedDayColor={Colors.tintColor}
+                previousTitle="<"
+                nextTitle=">"
+                startFromMonday={true}
+                onDateChange={this.onDateChange}
+              />
             )}
-
             {this.state.selectedStartDate !== null ||
             this.state.isDateSelected ? (
               <>
@@ -149,43 +143,16 @@ export default class HomeScreen extends React.Component {
                 </View>
                 <Text style={styles.whatToDo}>
                   2. Select Food from menu{" "}
-                  {this.state.selectedMenu && (
-                    <TabBarIcon
-                      name={
-                        Platform.OS === "ios"
-                          ? "ios-checkmark-circle-outline"
-                          : "md-checkmark-circle-outline"
-                      }
-                    />
-                  )}
+                  {this.state.selectedMenu && <CheckmarkInline />}
                 </Text>
                 <Text
-                  key={
-                    this.state.indexForDateMap.get(
-                      this.state.selectedStartDate
-                    ) &&
-                    this.state.indexForDateMap.get(this.state.selectedStartDate)
-                  }
+                  key={indexForDate && indexForDate}
                   onPress={e => {
-                    this.onTextPress(
-                      e,
-                      this.state.menuForDateMap.get(
-                        this.state.selectedStartDate
-                      )
-                    );
+                    this.onTextPress(e, menuForDate);
                   }}
-                  style={[
-                    styles.getStartedText,
-                    {
-                      color: Colors.tintColor
-                    }
-                  ]}
+                  style={styles.getStartedText}
                 >
-                  {this.state.menuForDateMap.get(this.state.selectedStartDate)
-                    ? this.state.menuForDateMap.get(
-                        this.state.selectedStartDate
-                      )
-                    : "Select another day"}
+                  {menuForDate ? menuForDate : "Select another day"}
                 </Text>
               </>
             ) : null}
@@ -199,6 +166,20 @@ export default class HomeScreen extends React.Component {
           </View>
         </ScrollView>
       </View>
+    );
+  }
+}
+
+export class CheckmarkInline extends React.Component {
+  render() {
+    return (
+      <TabBarIcon
+        name={
+          Platform.OS === "ios"
+            ? "ios-checkmark-circle-outline"
+            : "md-checkmark-circle-outline"
+        }
+      />
     );
   }
 }
@@ -251,7 +232,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: 24,
     textAlign: "center",
-    color: "black"
+    color: Colors.tintColor
   },
   tabBarInfoContainer: {
     position: "absolute",

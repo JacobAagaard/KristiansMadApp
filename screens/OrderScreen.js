@@ -34,7 +34,7 @@ export default class HomeScreen extends React.Component {
   setMenuDateMap = dateArr => {
     var menuArr = new Array();
     var menuDateMap = new Map();
-    var indexMenuMap = new Map();
+    var indexDateMap = new Map();
     fetch(
       "https://raw.githubusercontent.com/imsky/wordlists/master/nouns/fast_food.txt"
     ).then(response => {
@@ -46,13 +46,13 @@ export default class HomeScreen extends React.Component {
       var smallestArr = dateArr < menuArr ? dateArr : menuArr;
       for (var i = 0; i < smallestArr.length; i++) {
         menuDateMap.set(dateArr[i], menuArr[i]);
-        indexMenuMap.set(menuArr[i], i);
+        indexDateMap.set(dateArr[i], i);
       }
       console.log("MenuDateMap: ", menuDateMap);
-      console.log("DateMenuMap: ", indexMenuMap);
+      console.log("DateMenuMap: ", indexDateMap);
       this.setState({
         menuForDateMap: menuDateMap,
-        indexForMenuMap: indexMenuMap
+        indexForDateMap: indexDateMap
       });
     });
   };
@@ -61,7 +61,8 @@ export default class HomeScreen extends React.Component {
     super(props);
     this.state = {
       selectedStartDate: null,
-      isDateSelected: false
+      isDateSelected: false,
+      selectedMenu: null
     };
     this.onDateChange = this.onDateChange.bind(this);
   }
@@ -90,9 +91,14 @@ export default class HomeScreen extends React.Component {
 
   onDateSelected = () => {
     this.setState({
-      isDateSelected: !this.state.isDateSelected
+      isDateSelected: !this.state.isDateSelected,
+      selectedMenu: null
     });
   };
+
+  onTextPress(event, text) {
+    this.setState({ selectedMenu: text });
+  }
 
   render() {
     const { selectedStartDate } = this.state;
@@ -135,13 +141,26 @@ export default class HomeScreen extends React.Component {
                 <Text style={styles.whatToDo}>2. Select Food from menu</Text>
                 <TouchableOpacity>
                   <Text
+                    key={
+                      this.state.indexForDateMap.get(
+                        this.state.selectedStartDate
+                      ) &&
+                      this.state.indexForDateMap.get(
+                        this.state.selectedStartDate
+                      )
+                    }
+                    onPress={e => {
+                      this.onTextPress(
+                        e,
+                        this.state.menuForDateMap.get(
+                          this.state.selectedStartDate
+                        )
+                      );
+                    }}
                     style={[
                       styles.getStartedText,
                       {
-                        color:
-                          this.state.selectedFoodId !== 0
-                            ? Colors.tintColor
-                            : "black"
+                        color: Colors.tintColor
                       }
                     ]}
                   >
@@ -154,9 +173,11 @@ export default class HomeScreen extends React.Component {
                 </TouchableOpacity>
               </>
             ) : null}
-            {this.state.selectedMenu && (
+            {this.state.selectedMenu !== null && (
               <>
-                <Text style={styles.whatToDo}>3. Enjoy!</Text>
+                <Text style={styles.whatToDo}>{`3. Enjoy your ${
+                  this.state.selectedMenu
+                } !`}</Text>
               </>
             )}
           </View>
@@ -210,7 +231,7 @@ const styles = StyleSheet.create({
     color: Colors.tintColor
   },
   getStartedText: {
-    fontSize: 17,
+    fontSize: 20,
     lineHeight: 24,
     textAlign: "center",
     color: "black"
